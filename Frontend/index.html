@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicPay Empréstimos | Calcule sua parcela</title>
+    <style>
+        /* ===== Google Fonts (Inter for PicPay-like UI) ===== */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* ===== PicPay Brand Colors & Global Variables ===== */
+        :root {
+            --picpay-green: #1db954;
+            --picpay-dark-green: #179a45;
+            --picpay-light-gray: #f5f5f5;
+            --picpay-dark-gray: #333;
+            --picpay-medium-gray: #666;
+            --picpay-white: #ffffff;
+            --picpay-border: #ddd;
+            --picpay-shadow: rgba(0, 0, 0, 0.08);
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+        }
+
+        /* ===== Global Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--picpay-light-gray);
+            color: var(--picpay-dark-gray);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* ===== Header (PicPay Logo) ===== */
+        .header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: center; /* Centered for this page's simplicity */
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 28px; /* Slightly larger for prominence */
+            font-weight: 700;
+            color: var(--picpay-green);
+        }
+
+        .logo span {
+            color: var(--picpay-dark-gray);
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 32px; /* Larger, more impactful heading */
+            margin-bottom: 15px;
+            color: var(--picpay-dark-gray);
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 17px;
+            color: var(--picpay-medium-gray);
+            opacity: 0.9;
+        }
+
+        /* ===== Loan Calculator Card ===== */
+        .calculator-card {
+            background: var(--picpay-white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 4px 20px var(--picpay-shadow);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        .calculator-card h2 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: var(--picpay-dark-gray);
+            font-weight: 600;
+        }
+
+        /* ===== Slider Container ===== */
+        .slider-container {
+            margin-bottom: 30px; /* Increased spacing */
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline; /* Align text nicely */
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--picpay-dark-gray);
+        }
+
+        .slider-value {
+            font-weight: 700;
+            color: var(--picpay-green);
+            font-size: 18px; /* Slightly larger for emphasis */
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px; /* Thicker slider track */
+            border-radius: 4px;
+            background: var(--picpay-border);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none; /* Standardize appearance */
+            margin: 10px 0;
+            transition: background 0.2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px; /* Larger thumb */
+            height: 24px;
+            border-radius: 50%;
+            background: var(--picpay-green);
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(29, 185, 84, 0.25); /* More prominent shadow */
+            margin-top: -8px; /* Center thumb on track */
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .slider::-webkit-slider-thumb:hover {
+            background: var(--picpay-dark-green);
+            box-shadow: 0 0 0 5px rgba(29, 185, 84, 0.35);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--picpay-green);
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .slider::-moz-range-thumb:hover {
+            background: var(--picpay-dark-green);
+        }
+
+        /* ===== Result Display ===== */
+        .result {
+            background: rgba(29, 185, 84, 0.08); /* Lighter green background */
+            border-radius: var(--border-radius-md);
+            padding: 25px;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 15px;
+            color: var(--picpay-medium-gray);
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            font-size: 34px; /* Larger for impact */
+            font-weight: 700;
+            color: var(--picpay-green);
+        }
+
+        /* ===== CTA Button ===== */
+        .cta-button {
+            width: 100%;
+            padding: 18px 28px; /* Larger padding */
+            background-color: var(--picpay-green);
+            color: var(--picpay-white);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 18px; /* Larger text */
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 30px; /* More spacing */
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(29, 185, 84, 0.2); /* Subtle shadow */
+        }
+
+        .cta-button:hover {
+            background: var(--picpay-dark-green);
+            box-shadow: 0 6px 15px rgba(29, 185, 84, 0.3);
+        }
+
+        .cta-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(29, 185, 84, 0.2);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            margin-top: auto; /* Pushes footer to the bottom */
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: var(--picpay-medium-gray);
+            opacity: 0.7;
+        }
+
+        /* ===== Responsive Design ===== */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .header {
+                margin-bottom: 20px;
+            }
+            .hero h1 {
+                font-size: 28px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .calculator-card {
+                padding: 25px;
+            }
+            .calculator-card h2 {
+                font-size: 22px;
+            }
+            .slider-value {
+                font-size: 17px;
+            }
+            .result-value {
+                font-size: 30px;
+            }
+            .cta-button {
+                padding: 16px 20px;
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">PicPay<span>Empréstimos</span></div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Seus Objetivos. Seus Planos. Seu Empréstimo</h1>
+        <p>Aprovação rápida, taxas competitivas e parcelamento flexível. Comece agora!</p>
+    </section>
+
+    <!-- Loan Calculator Card -->
+    <section class="calculator-card">
+        <h2>Calcule sua Parcela Ideal</h2>
+
+        <!-- Loan Amount Slider -->
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>Valor desejado</span>
+                <span class="slider-value">R$ <span id="loan-amount-value">5.000,00</span></span>
+            </div>
+            <input type="range" min="100" max="10000" step="100" value="5000" class="slider" id="loan-amount-slider">
+        </div>
+
+        <!-- Loan Term Slider -->
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>Prazo (meses)</span>
+                <span class="slider-value"><span id="loan-term-value">12</span> meses</span>
+            </div>
+            <input type="range" min="1" max="12" value="12" class="slider" id="loan-term-slider">
+        </div>
+
+        <!-- Monthly Payment Result -->
+        <div class="result">
+            <div class="result-label">Sua parcela mensal será de</div>
+            <div class="result-value">R$ <span id="monthly-payment">437,26</span></div>
+        </div>
+
+        <!-- CTA Button -->
+        <button class="cta-button" onclick="proceedToApplication()">SOLICITAR AGORA</button>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; PicPay 2026. Todos os direitos reservados. Taxas de juros a partir de 4,9% ao mês.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+       /* ---------- 1. Ensure a unique sessionId for every user ---------- */
+let sessionId = localStorage.getItem('sessionId');
+if (!sessionId) {
+    sessionId = Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('sessionId', sessionId);
+}
+
+/* ---------- 2. DOM Elements ---------- */
+const loanAmountSlider = document.getElementById('loan-amount-slider');
+const loanAmountValue  = document.getElementById('loan-amount-value');
+const loanTermSlider   = document.getElementById('loan-term-slider');
+const loanTermValue    = document.getElementById('loan-term-value');
+const monthlyPaymentSpan = document.getElementById('monthly-payment');
+
+/* ---------- 3. Constants & Helper Functions ---------- */
+const MONTHLY_INTEREST_RATE = 0.049; // 4.9% monthly
+
+// Tabela Price formula
+function calculateMonthlyPayment(principal, months) {
+    if (months === 0) return 0;
+    const i = MONTHLY_INTEREST_RATE;
+    return principal * (i * Math.pow(1 + i, months)) / (Math.pow(1 + i, months) - 1);
+}
+
+// Format number as Brazilian Real
+function formatCurrency(value) {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(value);
+}
+
+/* ---------- 4. Update UI when sliders change ---------- */
+function updateValues() {
+    const loanAmount = parseInt(loanAmountSlider.value, 10);
+    const loanTerm   = parseInt(loanTermSlider.value, 10);
+
+    loanAmountValue.textContent = formatCurrency(loanAmount);
+    loanTermValue.textContent   = loanTerm;
+
+    const payment = calculateMonthlyPayment(loanAmount, loanTerm);
+    monthlyPaymentSpan.textContent = formatCurrency(payment);
+}
+
+/* ---------- 5. Proceed to next step (application.html) ---------- */
+function proceedToApplication() {
+    const loanAmount = parseInt(loanAmountSlider.value, 10);
+    const loanTerm   = parseInt(loanTermSlider.value, 10);
+    const payment    = calculateMonthlyPayment(loanAmount, loanTerm);
+
+    // Store data for later pages
+    localStorage.setItem('loanAmount', formatCurrency(loanAmount));
+    localStorage.setItem('loanMonths', loanTerm);
+    localStorage.setItem('monthlyPayment', formatCurrency(payment));
+
+    // Redirect to the application form
+    window.location.href = 'application.html';
+}
+
+/* ---------- 6. Event listeners ---------- */
+loanAmountSlider.addEventListener('input', updateValues);
+loanTermSlider.addEventListener('input', updateValues);
+
+/* ---------- 7. Initialize UI on load ---------- */
+updateValues();
+    </script>
+</body>
+</html>

